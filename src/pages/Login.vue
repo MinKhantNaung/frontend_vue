@@ -1,5 +1,21 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import GuestLayout from "../components/GuestLayout.vue";
+import axiosClient from "../axios";
+import router from "../router";
+
+const data = ref({
+  email: "",
+  password: "",
+});
+
+function submit() {
+  axiosClient.get("/sanctum/csrf-cookie").then(() => {
+    axiosClient.post("/login", data.value).then(() => {
+      router.push({ name: "Home" });
+    });
+  });
+}
 </script>
 
 <template>
@@ -11,13 +27,14 @@ import GuestLayout from "../components/GuestLayout.vue";
     </h2>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+      <form @submit.prevent="submit" class="space-y-6">
         <div>
           <label for="email" class="block text-sm/6 font-medium text-gray-900"
             >Email address</label
           >
           <div class="mt-2">
             <input
+              v-model="data.email"
               type="email"
               name="email"
               id="email"
@@ -38,6 +55,7 @@ import GuestLayout from "../components/GuestLayout.vue";
           </div>
           <div class="mt-2">
             <input
+              v-model="data.password"
               type="password"
               name="password"
               id="password"
