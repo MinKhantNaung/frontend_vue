@@ -1,5 +1,20 @@
 <script setup lang="ts">
+import { ref } from "vue";
+import axiosClient from "../axios";
 import GuestLayout from "../components/GuestLayout.vue";
+
+const data = ref({
+  name: "",
+  email: "",
+  password: "",
+  password_confirmation: "",
+});
+
+function submit() {
+  axiosClient.get("/sanctum/csrf-cookie").then(() => {
+    axiosClient.post("/register", data.value);
+  });
+}
 </script>
 
 <template>
@@ -11,13 +26,14 @@ import GuestLayout from "../components/GuestLayout.vue";
     </h2>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form class="space-y-6" action="#" method="POST">
+      <form @submit.prevent="submit" class="space-y-6">
         <div>
           <label for="name" class="block text-sm/6 font-medium text-gray-900"
             >Full Name</label
           >
           <div class="mt-2">
             <input
+              v-model="data.name"
               type="text"
               name="name"
               id="name"
@@ -34,6 +50,7 @@ import GuestLayout from "../components/GuestLayout.vue";
           >
           <div class="mt-2">
             <input
+              v-model="data.email"
               type="email"
               name="email"
               id="email"
@@ -54,6 +71,7 @@ import GuestLayout from "../components/GuestLayout.vue";
           </div>
           <div class="mt-2">
             <input
+              v-model="data.password"
               type="password"
               name="password"
               id="password"
@@ -73,6 +91,7 @@ import GuestLayout from "../components/GuestLayout.vue";
           </div>
           <div class="mt-2">
             <input
+              v-model="data.password_confirmation"
               type="password"
               name="passwordConfirmation"
               id="passwordConfirmation"
