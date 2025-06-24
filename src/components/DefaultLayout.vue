@@ -9,11 +9,19 @@ import {
   MenuItems,
 } from "@headlessui/vue";
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
+import axiosClient from "../axios";
+import router from "../router";
 
 const navigation = [
   { name: "Upload", to: { name: "Home" } },
   { name: "My Images", to: { name: "MyImages" } },
 ];
+
+function logout() {
+  axiosClient.post("/logout").then(() => {
+    router.push({ name: "Login" });
+  });
+}
 </script>
 
 <template>
@@ -81,6 +89,7 @@ const navigation = [
                   >
                     <MenuItem>
                       <button
+                        @click.prevent="logout"
                         :class="['block px-4 py-2 text-sm text-gray-700']"
                       >
                         Sign out
