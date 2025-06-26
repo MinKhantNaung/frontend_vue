@@ -9,11 +9,18 @@ const data = ref({
   password: "",
 });
 
+const errorMessage = ref("");
+
 function submit() {
   axiosClient.get("/sanctum/csrf-cookie").then(() => {
-    axiosClient.post("/login", data.value).then(() => {
-      router.push({ name: "Home" });
-    });
+    axiosClient
+      .post("/login", data.value)
+      .then(() => {
+        router.push({ name: "Home" });
+      })
+      .catch((error) => {
+        errorMessage.value = error.response.data.message;
+      });
   });
 }
 </script>
@@ -26,7 +33,14 @@ function submit() {
       Sign in to your account
     </h2>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <div
+      v-if="errorMessage"
+      class="mt-4 py-2 px-3 rounded text-white bg-red-400"
+    >
+      {{ errorMessage }}
+    </div>
+
+    <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-sm">
       <form @submit.prevent="submit" class="space-y-6">
         <div>
           <label for="email" class="block text-sm/6 font-medium text-gray-900"
