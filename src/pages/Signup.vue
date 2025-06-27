@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import axiosClient from "../axios";
 import GuestLayout from "../components/GuestLayout.vue";
+import router from "../router";
 
 const data = ref({
   name: "",
@@ -10,9 +11,18 @@ const data = ref({
   password_confirmation: "",
 });
 
+const errors = ref<Record<string, string[]>>({});
+
 function submit() {
   axiosClient.get("/sanctum/csrf-cookie").then(() => {
-    axiosClient.post("/register", data.value);
+    axiosClient
+      .post("/register", data.value)
+      .then(() => {
+        router.push({ name: "Home" });
+      })
+      .catch((error) => {
+        errors.value = error.response.data.errors;
+      });
   });
 }
 </script>
@@ -34,13 +44,18 @@ function submit() {
           <div class="mt-2">
             <input
               v-model="data.name"
+              :class="{
+                'border-2 border-red-600': errors.name && errors.name[0],
+              }"
               type="text"
               name="name"
               id="name"
               autocomplete="name"
-              required
               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             />
+          </div>
+          <div class="mt-2 text-red-600">
+            {{ errors.name ? errors.name[0] : "" }}
           </div>
         </div>
 
@@ -51,13 +66,18 @@ function submit() {
           <div class="mt-2">
             <input
               v-model="data.email"
+              :class="{
+                'border-2 border-red-600': errors.email && errors.email[0],
+              }"
               type="email"
               name="email"
               id="email"
               autocomplete="email"
-              required
               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             />
+          </div>
+          <div class="mt-2 text-red-600">
+            {{ errors.email ? errors.email[0] : "" }}
           </div>
         </div>
 
@@ -72,12 +92,18 @@ function submit() {
           <div class="mt-2">
             <input
               v-model="data.password"
+              :class="{
+                'border-2 border-red-600':
+                  errors.password && errors.password[0],
+              }"
               type="password"
               name="password"
               id="password"
-              required
               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             />
+          </div>
+          <div class="mt-2 text-red-600">
+            {{ errors.password ? errors.password[0] : "" }}
           </div>
         </div>
 
@@ -95,7 +121,6 @@ function submit() {
               type="password"
               name="passwordConfirmation"
               id="passwordConfirmation"
-              required
               class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
             />
           </div>
