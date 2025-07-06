@@ -25,9 +25,24 @@ const pagination = ref<{
   },
 });
 
+async function copyImageUrl(url: string) {
+  await navigator.clipboard.writeText(url);
+}
+
+function deleteImage(id: number) {
+  if (!confirm("Are you sure you want to delete this image?")) {
+    return;
+  }
+
+  axiosClient.delete(`/api/images/${id}`).then(() => {
+    images.value.data = images.value.data.filter(
+      (image: { id: number }) => image.id !== id
+    );
+  });
+}
+
 function fetchImages(url: string = "/api/images") {
   axiosClient.get(url).then((response) => {
-    console.log(response.data);
     images.value = response.data;
     pagination.value.meta = response.data.meta;
   });
@@ -65,7 +80,22 @@ onMounted(() => {
               {{ image.label }}
             </h3>
             <p class="text-sm text-gray-500 mb-4">{{ image.label }}</p>
-            <div class="flex justify-between"></div>
+            <div class="flex justify-between">
+              <button
+                type="submit"
+                @click="copyImageUrl(image.url)"
+                class="rounded-md bg-indigo-600 px-3 py-1 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Copy Image Url
+              </button>
+              <button
+                type="submit"
+                @click="deleteImage(image.id)"
+                class="rounded-md bg-red-600 px-3 py-1 text-sm/6 font-semibold text-white shadow-sm hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -9,7 +9,6 @@ export const useUserStore = defineStore('user', {
         fetchUser() {
             axiosClient.get('/api/user')
                 .then(response => {
-                    console.log(response)
                     this.user = response
                 })
         }
