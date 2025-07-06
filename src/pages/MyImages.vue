@@ -4,11 +4,51 @@ import axiosClient from "../axios";
 
 const images = ref();
 
-onMounted(() => {
-  axiosClient.get("/api/images").then((response) => {
+interface PaginationMeta {
+  current_page: number;
+  last_page: number;
+  links: {
+    url: string | null;
+    label: string;
+    active: boolean;
+  }[];
+}
+
+interface PaginationLinks {
+  first: string;
+  last: string;
+  prev: string | null;
+  next: string | null;
+}
+
+const pagination = ref<{
+  meta: PaginationMeta;
+  links: PaginationLinks;
+}>({
+  meta: {
+    current_page: 1,
+    last_page: 1,
+    links: [],
+  },
+  links: {
+    first: "",
+    last: "",
+    prev: null,
+    next: null,
+  },
+});
+
+function fetchImages(url: string = "/api/images") {
+  axiosClient.get(url).then((response) => {
     console.log(response.data);
     images.value = response.data;
+    pagination.value.meta = response.data.meta;
+    pagination.value.links = response.data.links;
   });
+}
+
+onMounted(() => {
+  fetchImages();
 });
 </script>
 
@@ -42,6 +82,23 @@ onMounted(() => {
             <div class="flex justify-between"></div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex flex-wrap justify-center gap-1 text-sm">
+      <div v-for="(link, index) in pagination.meta.links" :key="index">
+        <button
+          v-if="link.url !== null"
+          :class="[
+            'px-3 py-1 border rounded',
+            link.active
+              ? 'bg-blue-600 text-white'
+              : 'bg-white text-gray-700 hover:bg-gray-100',
+          ]"
+          @click="fetchImages(link.url)"
+          v-html="link.label"
+        ></button>
       </div>
     </div>
   </main>
