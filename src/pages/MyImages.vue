@@ -14,27 +14,13 @@ interface PaginationMeta {
   }[];
 }
 
-interface PaginationLinks {
-  first: string;
-  last: string;
-  prev: string | null;
-  next: string | null;
-}
-
 const pagination = ref<{
   meta: PaginationMeta;
-  links: PaginationLinks;
 }>({
   meta: {
     current_page: 1,
     last_page: 1,
     links: [],
-  },
-  links: {
-    first: "",
-    last: "",
-    prev: null,
-    next: null,
   },
 });
 
@@ -43,7 +29,6 @@ function fetchImages(url: string = "/api/images") {
     console.log(response.data);
     images.value = response.data;
     pagination.value.meta = response.data.meta;
-    pagination.value.links = response.data.links;
   });
 }
 
