@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import axiosClient from "../axios";
+import Pagination from "../components/Pagination.vue";
 
 const images = ref();
 
@@ -70,21 +71,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="flex flex-wrap justify-center gap-1 text-sm">
-      <div v-for="(link, index) in pagination.meta.links" :key="index">
-        <button
-          v-if="link.url !== null"
-          :class="[
-            'px-3 py-1 border rounded',
-            link.active
-              ? 'bg-blue-600 text-white'
-              : 'bg-white text-gray-700 hover:bg-gray-100',
-          ]"
-          @click="fetchImages(link.url)"
-          v-html="link.label"
-        ></button>
-      </div>
-    </div>
+    <Pagination :links="pagination.meta.links" @page-change="fetchImages" />
   </main>
 </template>
