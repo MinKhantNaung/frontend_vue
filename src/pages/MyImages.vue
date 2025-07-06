@@ -35,9 +35,8 @@ function deleteImage(id: number) {
   }
 
   axiosClient.delete(`/api/images/${id}`).then(() => {
-    images.value.data = images.value.data.filter(
-      (image: { id: number }) => image.id !== id
-    );
+    const currentPageUrl = `${images.value.meta.path}?page=${images.value.meta.current_page}`;
+    fetchImages(currentPageUrl);
   });
 }
 
