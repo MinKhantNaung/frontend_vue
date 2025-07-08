@@ -11,11 +11,15 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/vue/24/outline";
 import axiosClient from "../axios";
 import router from "../router";
+import { useUserStore } from "../stores/user";
 
 const navigation = [
   { name: "Upload", to: { name: "Home" } },
   { name: "My Images", to: { name: "MyImages" } },
 ];
+
+const userStore = useUserStore();
+const user = userStore.user;
 
 function logout() {
   axiosClient.post("/logout").then(() => {
@@ -73,7 +77,7 @@ function logout() {
                       src="/src/assets/avator.jpg"
                       alt=""
                     />
-                    <span class="text-white ml-3">User name</span>
+                    <span class="text-white ml-3">{{ user.name }}</span>
                   </MenuButton>
                 </div>
                 <transition
@@ -140,8 +144,12 @@ function logout() {
               />
             </div>
             <div class="ml-3">
-              <div class="text-base/5 font-medium text-white">user name</div>
-              <div class="text-sm font-medium text-gray-400">user email</div>
+              <div class="text-base/5 font-medium text-white">
+                {{ user.name }}
+              </div>
+              <div class="text-sm font-medium text-gray-400">
+                {{ user.email }}
+              </div>
             </div>
           </div>
           <div class="mt-3 space-y-1 px-2">
