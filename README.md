@@ -38,7 +38,7 @@ git clone https://github.com/MinKhantNaung/frontend_vue.git
 ```
 
 ```bash
-cd frontend_vue
+cd frontend_vue_gallery
 ```
 
 ```bash
